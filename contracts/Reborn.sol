@@ -1,10 +1,12 @@
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.9;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./Champion.sol";
 
+// SPDX-License-Identifier: MIT
 contract Reborn is VRFConsumerBaseV2, AccessControl {
 
     Champion _champion;
@@ -21,14 +23,14 @@ contract Reborn is VRFConsumerBaseV2, AccessControl {
 
     mapping(uint256 => uint256) _rebornRequests;
 
-    constructor(uint64 subscriptionId, address champion) VRFConsumerBaseV2(vrfCoordinator) {
+    constructor(uint64 subscriptionId, address champion) VRFConsumerBaseV2(cl_vrfCoordinator) {
         _champion = Champion(champion);
         cl_sdk = VRFCoordinatorV2Interface(cl_vrfCoordinator);
         cl_subscriptionId = subscriptionId;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function initiateReborn(address nft, uint256 tokenId) {
+    function initiateReborn(address nft, uint256 tokenId) external {
 
         require(ERC721(nft).ownerOf(tokenId) == msg.sender, "Not owner of NFT.");
 
