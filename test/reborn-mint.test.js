@@ -20,7 +20,7 @@ describe("Reborn", function () {
         let ChampionFactory = await ethers.getContractFactory("Champion");
         let RebornFactory = await ethers.getContractFactory("Reborn");
 
-        const champion = await ChampionFactory.deploy(metadata_uri);
+        const champion = await ChampionFactory.deploy();
         await champion.deployed();
 
         const reborn = await RebornFactory.deploy(8529, champion.address);
