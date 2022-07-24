@@ -52,11 +52,7 @@ module.exports = {
     },
     localhost: {
       url: "http://127.0.0.1:7545",
-      chainId: 1337,
-      accounts: [
-        "cd0764f98516aeee7b09d4caa33a500f02eea15da86739093f8befd097fb9cea",
-        "a9f244c1e325d6bc14a2043a7c75a8d4e5aeec238d00700f66bab86716a8eebd"
-      ]
+      chainId: 1337
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.com/v2/PZd297vs-VHFPPcF4mRaayWFRgdHKn6I`,

@@ -38,6 +38,7 @@ async function main() {
   } else if (hre.network.name === "mumbai" || hre.network.name === "rinkeby") {
     config = network_configs.staging
   } else {
+    await ethers.getSigners()
     config = network_configs.local
   }
 
@@ -54,7 +55,7 @@ async function main() {
   /** Deploy contracts */
 
   const Champion = await ethers.getContractFactory("Champion");
-  const champion = await Champion.deploy(config.metadata_uri);
+  const champion = await Champion.deploy();
   await champion.deployed();
   deployed.champion = champion.address;
   console.log("Champion deployed to:", champion.address);
