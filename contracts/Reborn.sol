@@ -9,6 +9,7 @@ import "./Champion.sol";
 // SPDX-License-Identifier: MIT
 contract Reborn is VRFConsumerBaseV2, AccessControl {
 
+    bool public _pause;
     Champion _champion;
 
     //<ChainLink VRF configuration>
@@ -24,6 +25,7 @@ contract Reborn is VRFConsumerBaseV2, AccessControl {
     mapping(uint256 => uint256) _rebornRequests;
 
     constructor(uint64 subscriptionId, address champion) VRFConsumerBaseV2(cl_vrfCoordinator) {
+        _pause = false;
         _champion = Champion(champion);
         cl_sdk = VRFCoordinatorV2Interface(cl_vrfCoordinator);
         cl_subscriptionId = subscriptionId;
@@ -31,7 +33,7 @@ contract Reborn is VRFConsumerBaseV2, AccessControl {
     }
 
     function initiateReborn(address nft, uint256 tokenId) external {
-
+        require(_pause == false, "Reborn is not accessible");
         require(ERC721(nft).ownerOf(tokenId) == msg.sender, "Not owner of NFT.");
 
         uint256 championId = _champion.reborn(nft, tokenId);
@@ -50,5 +52,14 @@ contract Reborn is VRFConsumerBaseV2, AccessControl {
         uint256 championId = _rebornRequests[requestId];
         require(championId != 0, "Champion doesn't exist");
         _champion.accomplishReborn(championId, randomWords[0], randomWords[1], randomWords[2], randomWords[3], randomWords[4]);
+    }
+
+
+    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause = true;
+    }
+
+    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause = false;
     }
 }
