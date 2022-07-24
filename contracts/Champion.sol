@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 // SPDX-License-Identifier: MIT
-contract Champion is ERC721, ERC721Pausable, AccessControl {
+contract Champion is AccessControl {
 
     bytes32 public constant REBORN_ROLE = keccak256("REBORN_ROLE");
 
@@ -22,12 +22,10 @@ contract Champion is ERC721, ERC721Pausable, AccessControl {
     event NewChampion(uint256 indexed championId);
     event ChampionReborn(uint256 indexed championId);
 
-    string __baseURI;
 
     mapping(uint256 => Profile) _champions;
 
-    constructor(string memory baseUri) ERC721("RebornChampion", "CHAMP") {
-        __baseURI = baseUri;
+    constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -41,8 +39,6 @@ contract Champion is ERC721, ERC721Pausable, AccessControl {
 
         _champions[uniqueId].nft = nft;
         _champions[uniqueId].tokenId = tokenId;
-
-        _safeMint(msg.sender, uniqueId);
 
         emit NewChampion(uniqueId);
         return uniqueId;
@@ -58,31 +54,7 @@ contract Champion is ERC721, ERC721Pausable, AccessControl {
         emit ChampionReborn(championId);
     }
 
-    function _baseURI() internal view override(ERC721) returns (string memory) {
-        return __baseURI;
-    }
-
     function singleID(address nft, uint256 tokenId) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(nft, tokenId)));
-    }
-
-    function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _pause();
-    }
-
-    function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _unpause();
-    }
-
-    function setBaseURI(string memory newBaseURI) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        __baseURI = newBaseURI;
-    }
-
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Pausable) {
-        super._beforeTokenTransfer(from, to, tokenId);
     }
 }
